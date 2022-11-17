@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react'
 // import {Card, Paper} from '@mui/material'
 import Sidebar from '../components/Sidebar'
 import {DragDropContext, Droppable} from 'react-beautiful-dnd'
-import PlantCard from '../components/PlantCard'
 import axios from 'axios'
+import PlantCard2 from '../components/PlantCard'
 
 const Search = (props) => {
 
@@ -61,7 +61,7 @@ const Search = (props) => {
                                     </div>
                                 }}
                             </Draggable> */}
-                            <PlantCard plant={plant} buttons={"yes/no"}/>
+                            <PlantCard2 plant={plant} buttons={"yes/no"}/>
                             {provided.placeholder}
                         </div>
                     }}

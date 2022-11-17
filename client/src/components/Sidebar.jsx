@@ -1,16 +1,27 @@
 import React from 'react'
 
-const Sidebar = () => {
+const Sidebar = (props) => {
 
     const sidebar = {
-        height: "100%",
+        // height: "100%",
         width: "100px",
-        margin: "0px 100px",
-        backgroundColor: "white"
+        margin: "0px 200px",
+        alignItems: "center",
+        display: "flex"
+
+
     }
 
     return (
-        <div onDragOver={ () => console.log("eyyyyy") } style={sidebar} onDropCapture={ () => console.log("this one")}>Sidebar</div>
+        <div style={sidebar} onDropCapture={ () => console.log("this one")}>
+            {props.text === "yes" ?
+            <h1>Yes!</h1>
+            :
+            <h1>Nope</h1>
+            }
+            
+            
+        </div>
     )
 }
 
