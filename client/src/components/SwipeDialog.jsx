@@ -12,7 +12,8 @@ const SwipeDialog = (props) => {
     //     ["green","gal"],
     //     ["foliated","friend"],
     //     ["budding","bud"],
-    //     ["pollinated","pal"]
+    //     ["pollinated","pal"],
+        // [photsynthoiqh[at]]
     // ]
 
     // useEffect(() => {
@@ -30,7 +31,7 @@ const SwipeDialog = (props) => {
             </DialogContent>
             <DialogActions>
                 <Button variant='outlined' sx={{backgroundColor: "#50c756", color: "black", borderColor:"black"}} onClick={ () => props.closeDialog() }>Keep Swiping</Button>
-                <Button variant='outlined' sx={{backgroundColor: "#50c756", color: "black", borderColor:"black"}} onClick={ () => navigate('/myPlants') }>View Your Plants</Button>
+                <Button variant='outlined' sx={{backgroundColor: "#50c756", color: "black", borderColor:"black"}} onClick={ () => navigate('/myPlants') }>View My Plants</Button>
             </DialogActions>
         </Dialog>
     )
