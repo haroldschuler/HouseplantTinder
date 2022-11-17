@@ -11,8 +11,6 @@ const PlantCard2 = (props) => {
     // const dragStart = (e) => {
     //     console.log(e)
     // }
-
-    const hardCodedUserID = "6373f942193678dc952b79ff"
     
     const mouseOver = (e) => {
         e.target.style.cursor = "pointer"

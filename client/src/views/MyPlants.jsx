@@ -6,11 +6,17 @@ import { DragDropContext, Droppable } from 'react-beautiful-dnd'
 import PlantCardSmall from '../components/PlantCardSmall'
 import Carousel from 'react-material-ui-carousel'
 import { useNavigate } from 'react-router-dom'
+import DetailDialog from '../components/DetailDialog'
 
 const MyPlants = () => {
 
     const [plants, setPlants] = useState([])
     const [user, setUser] = useState({})
+    const [dialogOpen, setDialogOpen] = useState(false)
+
+    const [wishlist,setWishlist] = useState([])
+    const [owned,setOwned] = useState([])
+
     const navigate = useNavigate()
 
     const hardCodedUserID = "6373f942193678dc952b79ff"
@@ -19,14 +25,19 @@ const MyPlants = () => {
         axios.get(`http://localhost:8000/api/user/${hardCodedUserID}`)
                 .then(res => {
                     setUser(res.data)
+                    console.log(res.data)
+                    setWishlist([...res.data.wishlist])
+                    setOwned([...res.data.owned])
                 })
                 .catch(err => console.log(err))
         axios.get(`http://localhost:8000/api/plants/all`)
             .then(res => {
                 setPlants(res.data)
+                console.log("hi")
             })
             .catch(err => console.log(err))
-    },[user])
+    },[])
+    // ^previously had "user" inside the [] but it was rerendering constantly
 
     const plantCardSizing = {
         height: "200px",
@@ -34,6 +45,13 @@ const MyPlants = () => {
         maxWidth: "300px"
     }
 
+    const closeDialog = () => {
+        console.log("hlads;flakjsd")
+        setDialogOpen(false)
+    }
+    const openDialog = () => {
+        setDialogOpen(true)
+    }
     // const style = {
     //     width: "90vw",
     //     marginTop: "50px",
@@ -45,6 +63,8 @@ const MyPlants = () => {
             axios.put(`http://localhost:8000/api/user/edit/${hardCodedUserID}`,{$pull: {owned: id}, $push: {wishlist: id}})
                 .then(res => {
                     // console.log(res.data)
+                    setWishlist([...wishlist,id])
+                    setOwned([...owned].filter( plantId => plantId !== id))
                 })
                 .catch(err => console.log(err))
         }
@@ -52,6 +72,8 @@ const MyPlants = () => {
             axios.put(`http://localhost:8000/api/user/edit/${hardCodedUserID}`,{$pull: {wishlist: id}, $push: {owned: id}})
                 .then(res => {
                     // console.log(res.data)
+                    setWishlist([...wishlist].filter( plantId => plantId !== id))
+                    setOwned([...owned,id])
                 })
                 .catch(err => console.log(err))
         }
@@ -61,6 +83,8 @@ const MyPlants = () => {
         console.log("remove")
         axios.put(`http://localhost:8000/api/user/edit/${hardCodedUserID}`,{$pull: {wishlist: id, owned: id}})
                 .then(res => {
+                    setWishlist([...wishlist].filter( plantId => plantId !== id))
+                    setOwned([...owned].filter( plantId => plantId !== id))
                     // console.log(res.data)
                 })
                 .catch(err => console.log(err))
@@ -76,14 +100,14 @@ const MyPlants = () => {
                                 <h2>Owned Plants</h2>
                             </div>
                             <Paper style={{margin: "25px"}}>
-                                {user?.owned?.length === 0 ?
+                                {owned?.length === 0 ?
                                 <div style={{padding: "25px"}}>
                                     <h2>No plants currently owned. Start swiping to find some more</h2>
                                     <Button variant='outlined' sx={{backgroundColor: "#50c756", color: "black", borderColor:"black"}} onClick={ () => navigate('/browse')}>Browse Plants</Button>
                                 </div>
                                 :
                                 <div style={{display: "flex", flexWrap: "wrap"}}>
-                                    {plants.filter( plant => user.owned.includes(plant._id)).map( (plant) => {
+                                    {plants.filter( plant => owned.includes(plant._id)).map( (plant) => {
                                         return (
                                             <div key={plant._id}>
                                                 <PlantCardSmall plant={plant} list={"owned"} moveTo={moveTo} remove={remove}></PlantCardSmall>
@@ -96,17 +120,18 @@ const MyPlants = () => {
                                 <h2>Wishlist</h2>
                             </div>
                             <Paper style={{margin: "25px"}}>
-                                {user?.wishlist?.length === 0 ?
+                                {wishlist?.length === 0 ?
                                 <div style={{padding: "25px"}}>
                                     <h2>No plants in wishlist. Start swiping to find some more</h2>
                                     <Button variant='outlined' sx={{backgroundColor: "#50c756", color: "black", borderColor:"black"}} onClick={ () => navigate('/browse')}>Browse Plants</Button>
                                 </div>
                                 :
                                 <div style={{display: "flex", flexWrap: "wrap"}}>
-                                    {plants.filter( (plant) => user.wishlist.includes(plant._id)).map( (plant) => {
+                                    {plants.filter( (plant) => wishlist.includes(plant._id)).map( (plant) => {
                                         return (
-                                            <div key={plant._id}>
+                                            <div key={plant._id} onClick={ () => openDialog()}>
                                                 <PlantCardSmall plant={plant} list={"wishlist"} moveTo={moveTo} remove={remove}></PlantCardSmall>
+                                                {/* <DetailDialog plant={plant} dialogOpen={dialogOpen} closeDialog={closeDialog}/> */}
                                             </div>
                                     )})}
                                 </div>
