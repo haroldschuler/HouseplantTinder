@@ -1,7 +1,9 @@
 import { Button, Card, FormControl, Input, InputLabel } from '@mui/material';
 import axios from 'axios';
 import React, { useState } from 'react'
+import { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import Navbar from './Navbar';
 
 const Login = (props) => {
 
@@ -9,6 +11,9 @@ const Login = (props) => {
         email: "",
         password: ""
     })
+    const [errMsgs,setErrMsgs] = useState([]);
+
+
     const navigate = useNavigate();
 
     const changeInput = async(e) => {
@@ -19,50 +24,49 @@ const Login = (props) => {
         e.preventDefault();
         axios.post("http://localhost:8000/api/user/login", user, {withCredentials: true})
             .then(res => {
-                console.log("logged in")
-                console.log(res)
                 navigate('/browse')
             })
-            .catch(err => console.log(err))
+            .catch(err => {
+                // console.log(err.response.data.msg)
+                setErrMsgs([...errMsgs, err.response.data.msg])
+            })
     }
 
     const logoutUser = () => {
         axios.get("http://localhost:8000/api/user/logout", {withCredentials: true})
             .then(res => {
-                console.log("logged out")
-                console.log(res)
+                navigate('/login')
             })
             .catch(err => console.log(err))
     }
 
-    const testUser = () => {
-        axios.get("http://localhost:8000/api/user/findUser", {withCredentials: true})
-            .then(res => {
-                console.log(res.data)
-            })
-            .catch(err => console.log(err))
-    }
-
-    // Log the user out if they ever navigate to this route
-    // logoutUser();
+    useEffect( () => {
+        logoutUser();
+    },[])
 
     return (
-        <div style={{display: "flex", justifyContent: "center", alignItems: "center"}}>
-            <Card style={{margin: "50px", padding: "25px"}}>
-                <FormControl>
-                    <InputLabel htmlFor='email'>Email: </InputLabel>
-                    <Input id='email' name="email" onChange={ (e) => changeInput(e) } value={user.email}/>
-                </FormControl>
-                <br></br><br></br>
-                <FormControl>
-                    <InputLabel htmlFor='password'>Password: </InputLabel>
-                    <Input type='password' id='password' name="password" onChange={ (e) => changeInput(e) } value={user.password}/>
-                </FormControl>
-                <br></br><br></br>
-                <Button variant='outlined' sx={{backgroundColor: "#50c756", color: "black", borderColor:"black"}} onClick={ loginUser }>Login</Button>
-                <br></br><br></br>
-                <Link to={'/register'}>Not a member? Register here</Link>
-            </Card>
+        <div>
+            <Navbar page={"login"}/>
+            <div style={{display: "flex", justifyContent: "center", alignItems: "center", height: "90vh"}}>
+                <Card style={{padding: "25px"}}>
+                    {errMsgs.map( (msg,idx) => {
+                        return <p key={idx} style={{color: "red"}}>{msg}</p>
+                    })}
+                    <FormControl>
+                        <InputLabel htmlFor='email'>Email: </InputLabel>
+                        <Input id='email' name="email" onChange={ (e) => changeInput(e) } value={user.email}/>
+                    </FormControl>
+                    <br></br><br></br>
+                    <FormControl>
+                        <InputLabel htmlFor='password'>Password: </InputLabel>
+                        <Input type='password' id='password' name="password" onChange={ (e) => changeInput(e) } value={user.password}/>
+                    </FormControl>
+                    <br></br><br></br>
+                    <Button variant='outlined' sx={{backgroundColor: "#50c756", color: "black", borderColor:"black"}} onClick={ loginUser }>Login</Button>
+                    <br></br><br></br>
+                    <Link to={'/register'}>Not a member? Register here</Link>
+                </Card>
+            </div>
         </div>
     )
 }

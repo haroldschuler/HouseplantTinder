@@ -1,8 +1,8 @@
-// import { Button } from '@mui/material';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import TinderCard from 'react-tinder-card'
+import Navbar from '../components/Navbar';
 import PlantCard from '../components/PlantCard';
 import Sidebar from '../components/Sidebar';
 import SwipeDialog from '../components/SwipeDialog';
@@ -17,19 +17,27 @@ const BrowsePlants = () => {
 
     const navigate = useNavigate()
 
-    // const [saying,setSaying] = useState([])
-    // const sayings = [
-    //     ["leafy","lad"],
-    //     ["green","gal"],
-    //     ["foliated","friend"],
-    //     ["budding","bud"],
-    //     ["pollinated","pal"]
-    // ]
+    const [saying,setSaying] = useState([])
+    const sayings = [
+        ["leafy","lad"],
+        ["green","gal"],
+        ["foliated","friend"],
+        ["pollinated","pal"],
+        ["housewarming","homie"],
+        ["lush","lady"],
+        ["bulbed","boy"],
+        ["cheerful","chum"],
+        ["chlorophyllic","confidante"],
+        ["cellulosic","sister"],
+        ["broadleafed","bro"],
+        ["budding","buddy"]
+    ]
+    // lush, broadleafed, shrubby
+    // cohort, companion, acquaintance
 
-    // useEffect(() => {
-    //     console.log("this" + Math.floor(Math.random()*sayings.length))
-    //     setSaying(sayings[Math.floor(Math.random()*sayings.length)]);
-    // },[])
+    useEffect(() => {
+        setSaying(sayings[Math.floor(Math.random()*sayings.length)]);
+    },[generateNew])
     
     const wrapper = {
         display: "flex",
@@ -65,7 +73,6 @@ const BrowsePlants = () => {
     useEffect( () => {
         axios.get("http://localhost:8000/api/user/findUser", {withCredentials: true})
             .then(res => {
-                console.log(res.data)
                 setUser(res.data)
                 let tempUser = res.data;
                 axios.post("http://localhost:8000/api/plant/find",{_id: {$nin: tempUser.swiped}})
@@ -78,10 +85,10 @@ const BrowsePlants = () => {
                 navigate('/login')
                 console.log(err)
             })
-    },[generateNew])
+    },[generateNew,navigate])
 
     const onSwipe = (direction) => {
-        console.log("You swiped " + direction);
+        // console.log("You swiped " + direction);
         if(direction === "left") {
             sayNo();
         }
@@ -91,20 +98,18 @@ const BrowsePlants = () => {
     }
 
     const onCardLeftScreen = (myIdentifier) => {
-        console.log(myIdentifier + ' left the screen')
+        // console.log(myIdentifier + ' left the screen')
     }
 
     const sayYes = () => {
         setPrevPlant(plant)
         setPlant({})
-        console.log("Adding plant to wishlist and swiped")
         let temp = generateNew + 1;
-        console.log(temp)
         setGenerateNew(temp)
         // THIS PUT REQUEST WORKS
         axios.put(`http://localhost:8000/api/user/edit/${user._id}`,{$addToSet: {wishlist: plant._id,swiped: plant._id}})
             .then(res => {
-                    console.log(res.data)
+                    // console.log(res.data)
                 })
                 .catch(err => console.log(err))
         setDialogOpen(true)
@@ -112,14 +117,12 @@ const BrowsePlants = () => {
 
     const sayNo = () => {
         setPlant({})
-        console.log("Adding plant to swiped")
         let temp = generateNew + 1;
-        console.log(temp)
         setGenerateNew(temp)
         // THIS PUT REQUEST WORKS
         axios.put(`http://localhost:8000/api/user/edit/${user._id}`,{$addToSet: {swiped: plant._id}})
             .then(res => {
-                console.log(res.data)
+                // console.log(res.data)
             })
             .catch(err => console.log(err))
     }
@@ -129,18 +132,20 @@ const BrowsePlants = () => {
     }
 
     return (
-        <div style={wrapper}>
-            <Sidebar text={"no"}/>
-            {plant._id ? 
-            <TinderCard onSwipe={ onSwipe } onCardLeftScreen={ () => onCardLeftScreen('what')} preventSwipe={['up','down']} flickOnSwipe={"false"}>
-                <PlantCard plant={plant} buttons={"yes/no"} sayYes={sayYes} sayNo={sayNo} size={plantCardSizing}/>
-            </TinderCard>
-            :
-            
-            <p>Loading...</p>
-            }
-            <Sidebar text={"yes"}/>
-            <SwipeDialog open={dialogOpen} closeDialog={closeDialog} plant={prevPlant}/>
+        <div>
+            <Navbar page={"browse"} status={"loggedIn"}/>
+            <div style={wrapper}>
+                <Sidebar text={"no"}/>
+                {plant._id ? 
+                <TinderCard onSwipe={ onSwipe } onCardLeftScreen={ () => onCardLeftScreen('what')} preventSwipe={['up','down']} flickOnSwipe={"false"}>
+                    <PlantCard plant={plant} buttons={"yes/no"} sayYes={sayYes} sayNo={sayNo} size={plantCardSizing}/>
+                </TinderCard>
+                :
+                <p>Loading...</p>
+                }
+                <Sidebar text={"yes"}/>
+                <SwipeDialog open={dialogOpen} closeDialog={closeDialog} plant={prevPlant} saying={saying}/>
+            </div>
         </div>
     )
 }

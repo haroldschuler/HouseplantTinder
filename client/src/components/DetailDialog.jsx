@@ -1,10 +1,7 @@
-import { Button, Card, Dialog, DialogTitle, Modal, Paper, Typography } from '@mui/material'
-import { width } from '@mui/system'
+import { Button, Card, Dialog, DialogTitle, Paper, Typography } from '@mui/material'
 import React from 'react'
 
 const DetailDialog = (props) => {
-
-    // console.log(props.plant)
 
     const dialogStyle = {
         padding: "15px",

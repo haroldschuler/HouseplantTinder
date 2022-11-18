@@ -1,9 +1,11 @@
 import { Button, Card, FormControl, Input, InputLabel } from '@mui/material';
 import axios from 'axios';
 import React, { useState } from 'react'
+import { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import Navbar from './Navbar';
 
-const Register = (props) => {
+const Register = () => {
 
     const [user, setUser] = useState({
         username: "",
@@ -11,72 +13,83 @@ const Register = (props) => {
         password: "",
         confirmPassword: "",
     })
+    
+    const [errMsgs, setErrMsgs] = useState([]);
 
     const navigate = useNavigate();
 
     const changeInput = async(e) => {
         setUser({...user, [e.target.name]: e.target.value});
     }
-
+    
+    const registerUser = (e) => {
+        setErrMsgs([])
+        e.preventDefault();
+        axios.post("http://localhost:8000/api/user/register", user, {withCredentials: true})
+        .then(res => {
+            navigate('/browse')
+        })
+        .catch(err => {
+            if(err.response.data.error.msg) {
+                setErrMsgs([err.response.data.error.msg])
+            }
+            if(err.response.data.error.errors) {
+                let errors = err.response.data.error.errors;
+                const tempErrors = []
+                for(let key in errors) {
+                    tempErrors.push(errors[key]["message"])
+                }
+                setErrMsgs([...errMsgs, tempErrors]);
+            }
+        })
+    }
+    
     const logoutUser = () => {
         axios.get("http://localhost:8000/api/user/logout", {withCredentials: true})
             .then(res => {
-                console.log("logged out")
-                console.log(res)
-                navigate('/browse')
+                navigate('/register')
             })
             .catch(err => console.log(err))
     }
-
-    const testUser = () => {
-        axios.get("http://localhost:8000/api/user/findUser", {withCredentials: true})
-            .then(res => {
-                console.log(res.data)
-            })
-            .catch(err => console.log(err))
-    }
-
-    const registerUser = (e) => {
-        e.preventDefault();
-        axios.post("http://localhost:8000/api/user/register", user, {withCredentials: true})
-            .then(res => {
-                console.log("registered")
-                console.log(res)
-
-            })
-            .catch(err => console.log(err))
-    }
-
-    // Log the user out if they ever navigate to this route
-    // logoutUser();
+    
+    useEffect( () => {
+        logoutUser();
+        setErrMsgs([])
+    },[])
 
     return (
-        <div style={{display: "flex", justifyContent: "center", alignItems: "center"}}>
-            <Card style={{margin: "50px", padding: "25px"}}>
-                <FormControl>
-                    <InputLabel htmlFor='username'>Username: </InputLabel>
-                    <Input id='username' name="username" onChange={ (e) => changeInput(e) } value={user.username}/>
-                </FormControl>
-                <br></br><br></br>
-                <FormControl>
-                    <InputLabel htmlFor='email'>Email: </InputLabel>
-                    <Input id='email' name="email" onChange={ (e) => changeInput(e) } value={user.email}/>
-                </FormControl>
-                <br></br><br></br>
-                <FormControl>
-                    <InputLabel htmlFor='password'>Password: </InputLabel>
-                    <Input type='password' id='password' name="password" onChange={ (e) => changeInput(e) } value={user.password}/>
-                </FormControl>
-                <br></br><br></br>
-                <FormControl>
-                    <InputLabel htmlFor='confirmPassword'>Confirm Password: </InputLabel>
-                    <Input type='password' id='confirmPassword' name="confirmPassword" onChange={ (e) => changeInput(e) } value={user.confirmPassword}/>
-                </FormControl>
-                <br></br><br></br>
-                <Button variant='outlined' sx={{backgroundColor: "#50c756", color: "black", borderColor:"black"}} onClick={ registerUser }>Register</Button>
-                <br></br><br></br>
-                <Link to={'/login'}>Already a member? Login here</Link>
-            </Card>
+        <div>
+            <Navbar page={"register"}/>
+            <div style={{display: "flex", justifyContent: "center", alignItems: "center", height: "90vh"}}>
+                <Card style={{padding: "25px"}}>
+                    {errMsgs.map( (msg,idx) => {
+                        return <p key={idx} style={{color: "red"}}>{msg}</p>
+                    })}
+                    <FormControl>
+                        <InputLabel htmlFor='username'>Username: </InputLabel>
+                        <Input id='username' name="username" onChange={ (e) => changeInput(e) } value={user.username}/>
+                    </FormControl>
+                    <br></br><br></br>
+                    <FormControl>
+                        <InputLabel htmlFor='email'>Email: </InputLabel>
+                        <Input id='email' name="email" onChange={ (e) => changeInput(e) } value={user.email}/>
+                    </FormControl>
+                    <br></br><br></br>
+                    <FormControl>
+                        <InputLabel htmlFor='password'>Password: </InputLabel>
+                        <Input type='password' id='password' name="password" onChange={ (e) => changeInput(e) } value={user.password}/>
+                    </FormControl>
+                    <br></br><br></br>
+                    <FormControl>
+                        <InputLabel htmlFor='confirmPassword'>Confirm Password: </InputLabel>
+                        <Input type='password' id='confirmPassword' name="confirmPassword" onChange={ (e) => changeInput(e) } value={user.confirmPassword}/>
+                    </FormControl>
+                    <br></br><br></br>
+                    <Button variant='outlined' sx={{backgroundColor: "#50c756", color: "black", borderColor:"black"}} onClick={ registerUser }>Register</Button>
+                    <br></br><br></br>
+                    <Link to={'/login'}>Already a member? Login here</Link>
+                </Card>
+            </div>
         </div>
     )
 }

@@ -1,7 +1,5 @@
 import { Button, Card, Paper } from '@mui/material'
-// import axios from 'axios'
 import React from 'react'
-// import { Draggable } from 'react-beautiful-dnd'
 
 const PlantCardSmall = (props) => {
     
@@ -19,7 +17,7 @@ const PlantCardSmall = (props) => {
                     <h3>{props.plant.name}</h3>
                     <p style={{fontStyle: "italic"}}>{props.plant.latinName}</p>
                     <div style={{display: "flex", justifyContent: "space-between"}}>
-                        <Button variant='outlined' sx={{color: "red", borderColor:"red"}} onClick={ () => props.remove(props.plant._id)}>Remove</Button>
+                        <Button variant='outlined' sx={{color: "red", borderColor:"red"}} onClick={ () => props.remove(props.plant._id)}>Unmatch</Button>
                         {props.list === "wishlist" ? 
                             <Button variant='outlined' sx={{backgroundColor: "#50c756", color: "black", borderColor:"black"}} onClick={ () => props.moveTo("owned","wishlist",props.plant._id)}>Move to Owned</Button>
                             :

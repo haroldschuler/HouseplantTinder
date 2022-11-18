@@ -8,7 +8,7 @@ const SwipeDialog = (props) => {
 
     return (
         <Dialog open={props.open}>
-            <DialogTitle>You matched with this leafy lad!</DialogTitle>
+            <DialogTitle>You matched with this {props.saying[0]} {props.saying[1]}!</DialogTitle>
             <DialogContent>
                 <img src={props.plant.imageURL} alt="plant" width={"300px"}></img>
                 <Typography>{props.plant.name} has been added to your wishlist</Typography>

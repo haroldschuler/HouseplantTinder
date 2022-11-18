@@ -3,21 +3,7 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  /* background-color: #50c756; */
   overflow: hidden;
-}
-
-.navbar {
-  background-color: saddlebrown;
-  height: 50px;
-  width: 95%;
-  padding: 15px 2.5%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.navbar > h1 {
-  color: #50c756;
 }
 
 .App-logo {
