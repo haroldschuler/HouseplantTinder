@@ -13,14 +13,16 @@ module.exports.findAll = (req, res) => {
 
 // USED FOR AUTHENTICATION -- finds a user by an extracted ID
 module.exports.findUser = (req,res) => {
+    // Previous workaround --- pulled the usertoken string out of the rawheader
     // I'm not proud of what I did here
-    const usertoken = req.rawHeaders.find( element => {
-        if(element.includes("usertoken=")) {
-            return element;
-        }
-    })
-    const usertokenArr = usertoken.split("usertoken=");
-    const userObj = jwt.decode(usertokenArr[1])
+    // const usertoken = req.rawHeaders.find( element => {
+    //     if(element.includes("usertoken=")) {
+    //         return element;
+    //     }
+    // })
+    // const usertokenArr = usertoken.split("usertoken=");
+    // const userObj = jwt.decode(usertokenArr[1])
+    const userObj = jwt.decode(req.cookies.usertoken)
     const userId = userObj["id"]
 
     User.findById(userId)

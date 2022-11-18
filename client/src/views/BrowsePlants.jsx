@@ -23,17 +23,14 @@ const BrowsePlants = () => {
         ["green","gal"],
         ["foliated","friend"],
         ["pollinated","pal"],
-        ["housewarming","homie"],
+        // ["housewarming","homie"],
         ["lush","lady"],
         ["bulbed","boy"],
-        ["cheerful","chum"],
         ["chlorophyllic","confidante"],
         ["cellulosic","sister"],
         ["broadleafed","bro"],
         ["budding","buddy"]
     ]
-    // lush, broadleafed, shrubby
-    // cohort, companion, acquaintance
 
     useEffect(() => {
         setSaying(sayings[Math.floor(Math.random()*sayings.length)]);
@@ -41,7 +38,7 @@ const BrowsePlants = () => {
     
     const wrapper = {
         display: "flex",
-        padding: "50px",
+        padding: "50px 0px",
         width: "100vw",
         overflow: "hidden",
         justifyContent: "center"

@@ -7,6 +7,19 @@ const PlantCard2 = (props) => {
         e.target.style.cursor = "pointer"
     }
 
+    const noButtonStyle = {
+        backgroundColor: "red",
+        color: "black",
+        borderColor:"black",
+        marginRight: "10px"
+    }
+    const yesButtonStyle = {
+        backgroundColor: "#50c756",
+        color: "black",
+        borderColor:"black",
+        marginLeft: "10px"
+    }
+
     return (
         <div onMouseOver={ (e) => mouseOver(e) }>
             <Paper elevation={6} style={{padding: "25px", maxWidth: "450px"}}>
@@ -18,8 +31,8 @@ const PlantCard2 = (props) => {
                     <p style={{fontStyle: "italic"}}>{props.plant.latinName}</p>
                     {props.buttons === "yes/no" ? 
                     <div>
-                        <Button variant='outlined' sx={{backgroundColor: "red", color: "black", borderColor:"black"}} onClick={ () => props.sayNo()}>No</Button>
-                        <Button variant='outlined' sx={{backgroundColor: "#50c756", color: "black", borderColor:"black"}} onClick={ () => props.sayYes()}>Yes</Button>
+                        <Button variant='outlined' sx={noButtonStyle} onClick={ () => props.sayNo()}>No</Button>
+                        <Button variant='outlined' sx={yesButtonStyle} onClick={ () => props.sayYes()}>Yes</Button>
                     </div>
                     : "no buttons - put a different button for view page"}
                 </Card>
