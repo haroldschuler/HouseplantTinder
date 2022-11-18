@@ -5,21 +5,6 @@ import { useNavigate } from 'react-router-dom'
 const SwipeDialog = (props) => {
 
     const navigate = useNavigate();
-    // This will have to be moved to the BrowsePlants view
-    // const [saying,setSaying] = useState([])
-    // const sayings = [
-    //     ["leafy","lad"],
-    //     ["green","gal"],
-    //     ["foliated","friend"],
-    //     ["budding","bud"],
-    //     ["pollinated","pal"],
-        // [photsynthoiqh[at]]
-    // ]
-
-    // useEffect(() => {
-    //     console.log("this" + Math.floor(Math.random()*sayings.length))
-    //     setSaying(sayings[Math.floor(Math.random()*sayings.length)]);
-    // },[])
 
     return (
         <Dialog open={props.open}>

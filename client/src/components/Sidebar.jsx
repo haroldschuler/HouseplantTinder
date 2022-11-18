@@ -19,8 +19,6 @@ const Sidebar = (props) => {
             :
             <h1>Nope</h1>
             }
-            
-            
         </div>
     )
 }

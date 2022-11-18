@@ -1,6 +1,7 @@
 // import { Button } from '@mui/material';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom';
 import TinderCard from 'react-tinder-card'
 import PlantCard from '../components/PlantCard';
 import Sidebar from '../components/Sidebar';
@@ -14,7 +15,21 @@ const BrowsePlants = () => {
     const [generateNew, setGenerateNew] = useState(0);
     const [dialogOpen, setDialogOpen] = useState(false)
 
-    const hardCodedUserID = "6373f942193678dc952b79ff"
+    const navigate = useNavigate()
+
+    // const [saying,setSaying] = useState([])
+    // const sayings = [
+    //     ["leafy","lad"],
+    //     ["green","gal"],
+    //     ["foliated","friend"],
+    //     ["budding","bud"],
+    //     ["pollinated","pal"]
+    // ]
+
+    // useEffect(() => {
+    //     console.log("this" + Math.floor(Math.random()*sayings.length))
+    //     setSaying(sayings[Math.floor(Math.random()*sayings.length)]);
+    // },[])
     
     const wrapper = {
         display: "flex",
@@ -23,24 +38,46 @@ const BrowsePlants = () => {
         overflow: "hidden",
         justifyContent: "center"
     }
-
+    
     const plantCardSizing = {
         width: "400px",
         height: "500px"
     }
 
+    // THIS SECTION RUNS THE INITIAL STUFF USING A HARD CODED USER ID - USEFUL FOR TESTING
+    // *************************************************************************************
+    // const hardCodedUserID = "6373f942193678dc952b79ff"
+    // useEffect( () => {
+    //     axios.get(`http://localhost:8000/api/user/${hardCodedUserID}`)
+    //             .then(res => {
+    //                 setUser(res.data)
+    //                 let tempUser = res.data;
+    //                 axios.post("http://localhost:8000/api/plant/find",{_id: {$nin: tempUser.swiped}})
+    //                         .then(res => {
+    //                             setPlant(res.data[Math.floor(Math.random()*res.data.length)])
+    //                         })
+    //                         .catch(err => console.log(err))
+    //             })
+    //             .catch(err => console.log(err))
+    // },[generateNew])
+    // *************************************************************************************
+
     useEffect( () => {
-        axios.get(`http://localhost:8000/api/user/${hardCodedUserID}`)
-                .then(res => {
-                    setUser(res.data)
-                    let tempUser = res.data;
-                    axios.post("http://localhost:8000/api/plant/find",{_id: {$nin: tempUser.swiped}})
-                            .then(res => {
-                                setPlant(res.data[Math.floor(Math.random()*res.data.length)])
-                            })
-                            .catch(err => console.log(err))
-                })
-                .catch(err => console.log(err))
+        axios.get("http://localhost:8000/api/user/findUser", {withCredentials: true})
+            .then(res => {
+                console.log(res.data)
+                setUser(res.data)
+                let tempUser = res.data;
+                axios.post("http://localhost:8000/api/plant/find",{_id: {$nin: tempUser.swiped}})
+                        .then(res => {
+                            setPlant(res.data[Math.floor(Math.random()*res.data.length)])
+                        })
+                        .catch(err => console.log(err))
+            })
+            .catch(err => {
+                navigate('/login')
+                console.log(err)
+            })
     },[generateNew])
 
     const onSwipe = (direction) => {
@@ -65,11 +102,11 @@ const BrowsePlants = () => {
         console.log(temp)
         setGenerateNew(temp)
         // THIS PUT REQUEST WORKS
-        // axios.put(`http://localhost:8000/api/user/edit/${hardCodedUserID}`,{$addToSet: {wishlist: plant._id,swiped: plant._id}})
-        //     .then(res => {
-            //         console.log(res.data)
-            //     })
-            //     .catch(err => console.log(err))
+        axios.put(`http://localhost:8000/api/user/edit/${user._id}`,{$addToSet: {wishlist: plant._id,swiped: plant._id}})
+            .then(res => {
+                    console.log(res.data)
+                })
+                .catch(err => console.log(err))
         setDialogOpen(true)
     }
 
@@ -80,11 +117,11 @@ const BrowsePlants = () => {
         console.log(temp)
         setGenerateNew(temp)
         // THIS PUT REQUEST WORKS
-        // axios.put(`http://localhost:8000/api/user/edit/${hardCodedUserID}`,{$addToSet: {swiped: plant._id}})
-        //     .then(res => {
-        //         console.log(res.data)
-        //     })
-        //     .catch(err => console.log(err))
+        axios.put(`http://localhost:8000/api/user/edit/${user._id}`,{$addToSet: {swiped: plant._id}})
+            .then(res => {
+                console.log(res.data)
+            })
+            .catch(err => console.log(err))
     }
 
     const closeDialog = () => {

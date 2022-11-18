@@ -2,9 +2,7 @@ import { Button, Paper } from '@mui/material'
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 // import { DragDropContext, Droppable } from 'react-beautiful-dnd'
-// import {ScrollMenu} from 'react-horizontal-scrolling-menu'
 import PlantCardSmall from '../components/PlantCardSmall'
-import Carousel from 'react-material-ui-carousel'
 import { useNavigate } from 'react-router-dom'
 import DetailDialog from '../components/DetailDialog'
 
@@ -20,25 +18,46 @@ const MyPlants = () => {
 
     const navigate = useNavigate()
 
-    const hardCodedUserID = "6373f942193678dc952b79ff"
-
+    
     useEffect( () => {
-        axios.get(`http://localhost:8000/api/user/${hardCodedUserID}`)
-                .then(res => {
-                    setUser(res.data)
-                    console.log(res.data)
-                    setWishlist([...res.data.wishlist])
-                    setOwned([...res.data.owned])
-                })
-                .catch(err => console.log(err))
-        axios.get(`http://localhost:8000/api/plants/all`)
+        axios.get("http://localhost:8000/api/user/findUser", {withCredentials: true})
             .then(res => {
-                setPlants(res.data)
-                console.log("hi")
+                setUser(res.data)
+                console.log(res.data)
+                setWishlist([...res.data.wishlist])
+                setOwned([...res.data.owned])
             })
-            .catch(err => console.log(err))
+            .catch(err => {
+                navigate('/login')
+                console.log(err)
+            })
+        axios.get(`http://localhost:8000/api/plants/all`)
+        .then(res => {
+            setPlants(res.data)
+        })
+        .catch(err => console.log(err))
     },[])
-    // ^previously had "user" inside the [] but it was rerendering constantly
+
+    // THIS SECTION RUNS THE INITIAL STUFF USING A HARD CODED USER ID - USEFUL FOR TESTING
+    // *************************************************************************************
+    // const hardCodedUserID = "6373f942193678dc952b79ff"
+    // useEffect( () => {
+    //     axios.get(`http://localhost:8000/api/user/${hardCodedUserID}`)
+    //             .then(res => {
+    //                 setUser(res.data)
+    //                 console.log(res.data)
+    //                 setWishlist([...res.data.wishlist])
+    //                 setOwned([...res.data.owned])
+    //             })
+    //             .catch(err => console.log(err))
+    //     axios.get(`http://localhost:8000/api/plants/all`)
+    //         .then(res => {
+    //             setPlants(res.data)
+    //         })
+    //         .catch(err => console.log(err))
+    // },[])
+    //    ^previously had "user" inside the [] but it was rerendering constantly
+    // *************************************************************************************
 
     const plantCardSizing = {
         height: "200px",
@@ -65,7 +84,7 @@ const MyPlants = () => {
 
     const moveTo = (toList,fromList,id) => {
         if(toList === "wishlist") {
-            axios.put(`http://localhost:8000/api/user/edit/${hardCodedUserID}`,{$pull: {owned: id}, $push: {wishlist: id}})
+            axios.put(`http://localhost:8000/api/user/edit/${user._id}`,{$pull: {owned: id}, $push: {wishlist: id}})
                 .then(res => {
                     // console.log(res.data)
                     setWishlist([...wishlist,id])
@@ -74,7 +93,7 @@ const MyPlants = () => {
                 .catch(err => console.log(err))
         }
         else {
-            axios.put(`http://localhost:8000/api/user/edit/${hardCodedUserID}`,{$pull: {wishlist: id}, $push: {owned: id}})
+            axios.put(`http://localhost:8000/api/user/edit/${user._id}`,{$pull: {wishlist: id}, $push: {owned: id}})
                 .then(res => {
                     // console.log(res.data)
                     setWishlist([...wishlist].filter( plantId => plantId !== id))
@@ -86,7 +105,7 @@ const MyPlants = () => {
 
     const remove = (id) => {
         console.log("remove")
-        axios.put(`http://localhost:8000/api/user/edit/${hardCodedUserID}`,{$pull: {wishlist: id, owned: id}})
+        axios.put(`http://localhost:8000/api/user/edit/${user._id}`,{$pull: {wishlist: id, owned: id}})
                 .then(res => {
                     setWishlist([...wishlist].filter( plantId => plantId !== id))
                     setOwned([...owned].filter( plantId => plantId !== id))
@@ -110,7 +129,7 @@ const MyPlants = () => {
                 <div style={{display: "flex", flexWrap: "wrap"}}>
                     {plants.filter( plant => owned.includes(plant._id)).map( (plant) => {
                         return (
-                            <div key={plant._id}>
+                            <div key={plant._id} onClick={ (e) => openDialog(e,plant)}>
                                 <PlantCardSmall plant={plant} list={"owned"} moveTo={moveTo} remove={remove}></PlantCardSmall>
                             </div>
                     )})}
@@ -138,19 +157,6 @@ const MyPlants = () => {
                 }
             </Paper>
             <DetailDialog plant={dialogPlant} dialogOpen={dialogOpen} closeDialog={closeDialog}/>
-            <Paper style={{margin: "25px"}}>
-                <div>
-                    <h2>Wishlist</h2>
-                    <Carousel>
-                        {plants.map( (plant) => {
-                        return (
-                            <div key={plant._id}>
-                                <PlantCardSmall plant={plant} size={plantCardSizing}></PlantCardSmall>
-                            </div>
-                    )})}
-                    </Carousel>
-                </div>
-            </Paper>
         </div>
     )
 }

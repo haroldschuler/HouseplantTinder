@@ -1,9 +1,11 @@
 import './App.css';
-import {Routes,Route, useNavigate} from 'react-router-dom'
-import Search from './views/Search';
+import {Routes,Route, useNavigate, Navigate } from 'react-router-dom'
 import MyPlants from './views/MyPlants';
 import BrowsePlants from './views/BrowsePlants';
 import { Button } from '@mui/material';
+import Login from './components/Login';
+import { useState } from 'react';
+import Register from './components/Register';
 
 function App() {
 
@@ -20,9 +22,11 @@ function App() {
       </div>
       <div>
         <Routes>
-          <Route path='/search' element={<Search/>} />
           <Route path='/myPlants' element={<MyPlants/>} />
           <Route path='/browse' element={<BrowsePlants/>} />
+          <Route path='/login' element={<Login/>} />
+          <Route path='/register' element={<Register/>} />
+          <Route path={'/*'} element={<Navigate to={'/browse'} />} />
         </Routes>
       </div>
     </div>
