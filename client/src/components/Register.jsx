@@ -63,8 +63,11 @@ const Register = () => {
             <div style={{display: "flex", justifyContent: "center", alignItems: "center", height: "90vh"}}>
                 <Card style={{padding: "25px"}}>
                     {errMsgs.map( (msg,idx) => {
-                        return <p key={idx} style={{color: "red"}}>{msg}</p>
-                    })}
+                        return (
+                            <div key={idx}>
+                                <p style={{color: "red"}}>{msg}</p>
+                            </div>
+                    )})}
                     <FormControl>
                         <InputLabel htmlFor='username'>Username: </InputLabel>
                         <Input id='username' name="username" onChange={ (e) => changeInput(e) } value={user.username}/>
